@@ -1,0 +1,5 @@
+<<<<<<< HEAD
+{datavalue1:1, datavalue2:2, hr12:'we did our new work here'}
+=======
+{datavalue1:1, datavalue2:2, hr12:'I'll be overwritten after they push'}
+>>>>>>> 4ff0d858482cfda74f5c6ab163b0e743debd6d53
