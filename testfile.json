@@ -1,1 +1,1 @@
-{datavalue1:1, datavalue2:2, hr12:'I'll be overwritten after they push it'}
+{datavalue1:1, datavalue2:2, hr12:'using merge'}
