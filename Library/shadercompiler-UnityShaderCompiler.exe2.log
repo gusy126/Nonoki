@@ -1,0 +1,42 @@
+Base path: C:/Program Files/Unity/2018.2.1f1/Editor/Data
+Cmd: initializeCompiler
+Cmd: compileComputeKernel
+  api=4 insize=5188 outsize=4101 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=9421 outsize=8677 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=5591 outsize=6445 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=1505 outsize=597 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=15322 outsize=5425 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=15322 outsize=6817 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=15322 outsize=5929 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=15322 outsize=7321 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=15322 outsize=8013 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=15322 outsize=9673 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=15322 outsize=9757 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=15322 outsize=7261 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=15322 outsize=8269 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=15322 outsize=7765 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=15322 outsize=8849 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=15322 outsize=9941 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=15322 outsize=8277 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=15322 outsize=9789 ok=1
+Cmd: compileComputeKernel
+  api=4 insize=15322 outsize=11449 ok=1
+Cmd: initializeCompiler
+Cmd: initializeCompiler
