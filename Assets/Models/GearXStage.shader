@@ -57,26 +57,6 @@ ENDCG
 
 SubShader 
 {
-	//Tags {"Queue" = "Geometry+100" }
-	CGPROGRAM
-	#pragma surface surfA Lambert
-
-	//sampler2D _MainTex;
-	fixed4 _Color;
-
-	struct Input {
-		float2 uv_MainTex;
-	};
-
-	void surfA(Input IN, inout SurfaceOutput o) {
-		//fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
-		half4 c2 = half4(1, 0, 1, 1);
-		//return c2;
-		// fixed4 c = (1, 0, 0, 1);
-		o.Albedo = c2.rgb;
-		o.Alpha = c2.a;
-	}
-	ENDCG
 
 	// note that a vertex shader is specified here but its using the one above
 	Pass{

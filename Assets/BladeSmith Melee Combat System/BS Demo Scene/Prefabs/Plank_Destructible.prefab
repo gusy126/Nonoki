@@ -1,0 +1,153 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &178562
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 441604}
+  - component: {fileID: 3322792}
+  - component: {fileID: 6594898}
+  - component: {fileID: 2321134}
+  - component: {fileID: 11440882}
+  m_Layer: 0
+  m_Name: Plank_Destructible
+  m_TagString: Enemy
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &441604
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178562}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7102585, w: 0.70394105}
+  m_LocalPosition: {x: -7.42, y: 1.7, z: -3.5751367}
+  m_LocalScale: {x: 4.960379, y: 0.48399174, z: 0.23104246}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &3322792
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178562}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &6594898
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178562}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &2321134
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178562}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: d5e800b1f8740d64da7ca1fe7ccd185d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!114 &11440882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 178562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: e64302b6f1393d4489eb1b9772c82fd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _health: 25
+  _hurtAnimator: {fileID: 0}
+  _hurtLegacyAnimation: {fileID: 0}
+  _numberOfHurtAnimations: 0
+  Blood: {fileID: 186244, guid: b069b8ec8fc7b884ebf07d4780cffbce, type: 3}
+  SoundSource: {fileID: 0}
+  _numberOfHurtSounds: 0
+  HurtSound1: {fileID: 0}
+  HurtSound2: {fileID: 0}
+  HurtSound3: {fileID: 0}
+  HurtSound4: {fileID: 0}
+  HurtSound5: {fileID: 0}
+  _numberOfDeathSounds: 0
+  DeathSound1: {fileID: 0}
+  DeathSound2: {fileID: 0}
+  DeathSound3: {fileID: 0}
+  DeathSound4: {fileID: 0}
+  DeathSound5: {fileID: 0}
+  _destroyOnDeath: 1
+  _destroyDelay: 0.05
+  _SpawnOnDeath: {fileID: 0}
+  _destroyComponent1: {fileID: 0}
+  _destroyComp1Delay: 0
+  _destroyComponent2: {fileID: 0}
+  _destroyComp2Delay: 0
+  _destroyComponent3: {fileID: 0}
+  _destroyComp3Delay: 0
+  _destroyComponent4: {fileID: 0}
+  _destroyComp4Delay: 0
+  _destroyComponent5: {fileID: 0}
+  _destroyComp5Delay: 0
+  _destroyGameObject1: {fileID: 0}
+  _destroyObj1Delay: 0
+  _destroyGameObject2: {fileID: 0}
+  _destroyObj2Delay: 0
+  _destroyGameObject3: {fileID: 0}
+  _destroyObj3Delay: 0
+  _destroyGameObject4: {fileID: 0}
+  _destroyObj4Delay: 0
+  _destroyGameObject5: {fileID: 0}
+  _destroyObj5Delay: 0
+  _sendDeathMessage: {fileID: 0}
+  _numberOfDeathAnimations: 0
+  _deathAnimator: {fileID: 0}
+  _deathLegacyAnimation: {fileID: 0}
+  _shield: {fileID: 0}
