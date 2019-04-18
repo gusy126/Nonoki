@@ -25,7 +25,7 @@ namespace RootMotion.Demos {
 
 		protected Transform cam;                    // A reference to the main camera in the scenes transform
 
-		void Start () {
+		protected virtual void Start () {
 			// get the transform of the main camera
 			cam = Camera.main.transform;
 		}

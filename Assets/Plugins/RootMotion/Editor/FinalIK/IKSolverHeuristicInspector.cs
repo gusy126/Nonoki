@@ -35,7 +35,7 @@ namespace RootMotion.FinalIK {
 		}
 
 		public static void AddBones(SerializedProperty prop, bool editHierarchy, bool editWeights) {
-			EditorGUILayout.PropertyField(prop.FindPropertyRelative("useRotationLimits"), new GUIContent("Use Rotation Limits", "If true, rotation limits (if excisting) will be applied on each iteration."));
+			EditorGUILayout.PropertyField(prop.FindPropertyRelative("useRotationLimits"), new GUIContent("Use Rotation Limits", "If true, rotation limits (if existing) will be applied on each iteration."));
 			EditorGUILayout.PropertyField(prop.FindPropertyRelative("XY"), new GUIContent("2D", "If true, will solve only in the XY plane."));
 
 			EditorGUILayout.Space();

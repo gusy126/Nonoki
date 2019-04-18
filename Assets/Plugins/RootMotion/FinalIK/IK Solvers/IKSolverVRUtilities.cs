@@ -181,10 +181,6 @@ namespace RootMotion.FinalIK {
 					float targetLength = targetDirection.magnitude;
 					targetPosition = startPosition + (targetDirection / targetLength) * Mathf.Max(length * minNormalizedTargetDistance, targetLength);
 				}
-
-				foreach (VirtualBone bone in bones) {
-					bone.solverPosition += startOffset;
-				}
 				
 				// Iterating the solver
 				for (int iteration = 0; iteration < iterations; iteration ++) {
@@ -197,6 +193,10 @@ namespace RootMotion.FinalIK {
 					}
 					
 					// Stage 2
+                    if (iteration == 0) {
+                        foreach (VirtualBone bone in bones) bone.solverPosition += startOffset;
+                    }
+                    
 					bones[0].solverPosition = startPosition;
 						
 					for (int i = 1; i < bones.Length; i++) {

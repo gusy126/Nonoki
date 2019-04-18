@@ -25,7 +25,7 @@ namespace RootMotion.FinalIK {
 		/// </summary>
 		public int maxIterations = 4;
 		/// <summary>
-		/// If true, rotation limits (if excisting) will be applied on each iteration.
+		/// If true, rotation limits (if existing) will be applied on each iteration.
 		/// </summary>
 		public bool useRotationLimits = true;
 		/// <summary>

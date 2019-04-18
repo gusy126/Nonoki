@@ -105,6 +105,11 @@ namespace RootMotion.FinalIK {
 		/// </summary>
 		[Tooltip("The radius of the spherecast from the root that determines whether the character root is grounded.")]
 		public float rootSphereCastRadius = 0.1f;
+        /// <summary>
+        /// If false, keeps the foot that is over a ledge at the root level. If true, lowers the overstepping foot and body by the 'Max Step' value.
+        /// </summary>
+        [Tooltip("If false, keeps the foot that is over a ledge at the root level. If true, lowers the overstepping foot and body by the 'Max Step' value.")]
+        public bool overstepFallsDown = true;
 		/// <summary>
 		/// The raycasting quality. Fastest is a single raycast per foot, Simple is three raycasts, Best is one raycast and a capsule cast per foot.
 		/// </summary>
@@ -157,8 +162,8 @@ namespace RootMotion.FinalIK {
 			
 			if (maxStep <= 0f) return h;
 			
-			if (quality != Quality.Best) Physics.Raycast(legsCenter + _up * maxStep, -_up, out h, maxStep * distMlp, layers);
-			else Physics.SphereCast(legsCenter + _up * maxStep, rootSphereCastRadius, -up, out h, maxStep * distMlp, layers);
+			if (quality != Quality.Best) Physics.Raycast(legsCenter + _up * maxStep, -_up, out h, maxStep * distMlp, layers, QueryTriggerInteraction.Ignore);
+			else Physics.SphereCast(legsCenter + _up * maxStep, rootSphereCastRadius, -up, out h, maxStep * distMlp, layers, QueryTriggerInteraction.Ignore);
 			
 			return h;
 		}

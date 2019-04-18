@@ -149,7 +149,7 @@ namespace RootMotion.FinalIK {
 			/// <summary>
 			/// What the camera should be looking at to trigger the interaction?
 			/// </summary>
-			[Tooltip("What the camera should be looking at to trigger the interaction?")]
+			[Tooltip("What the camera should be looking at to trigger the interaction? If null, this camera position will not be used.")]
 			public Collider lookAtTarget;
 			/// <summary>
 			/// The direction from the lookAtTarget towards the camera (in lookAtTarget's space).

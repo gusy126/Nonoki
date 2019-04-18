@@ -51,18 +51,18 @@ namespace RootMotion.FinalIK {
 		public void SetSpline(Keyframe[] keyframes) {
 			spline.keys = keyframes;
 		}
-		
-		/*
+
+        /*
 		 * The AnimationCurve orthogonally mapped onto a sphere that defines the swing limits
 		 * */
-		[SerializeField][HideInInspector] public AnimationCurve spline;
-		
-		#endregion Main Interface
-		
-		/*
+        [SerializeField][HideInInspector] public AnimationCurve spline;
+
+        #endregion Main Interface
+
+        /*
 		 * Limits the rotation in the local space of this instance's Transform.
 		 * */
-		protected override Quaternion LimitRotation(Quaternion rotation) {		
+        protected override Quaternion LimitRotation(Quaternion rotation) {		
 			// Subtracting off-limits swing
 			Quaternion swing = LimitSwing(rotation);
 			

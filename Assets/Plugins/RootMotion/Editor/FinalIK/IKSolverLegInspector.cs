@@ -37,6 +37,10 @@ namespace RootMotion.FinalIK {
 			EditorGUILayout.PropertyField(prop.FindPropertyRelative("leg.bendGoalWeight"), new GUIContent("Bend Goal Weight", "Weight of the bend goal."));
 
 			EditorGUILayout.PropertyField(prop.FindPropertyRelative("leg.swivelOffset"), new GUIContent("Swivel Offset", "Angular offset of the leg's bending direction."));
+			EditorGUILayout.PropertyField(prop.FindPropertyRelative("leg.bendToTargetWeight"), new GUIContent("Bend To Target Weight", "If 0, the bend plane will be locked to the rotation of the pelvis and rotating the foot will have no effect on the knee direction. If 1, to the target rotation of the leg so that the knee will bend towards the forward axis of the foot. Values in between will be slerped between the two."));
+			EditorGUILayout.PropertyField(prop.FindPropertyRelative("leg.legLengthMlp"), new GUIContent("Leg Length Mlp", "Use this to make the leg shorter/longer."));
+			EditorGUILayout.PropertyField(prop.FindPropertyRelative("leg.stretchCurve"), new GUIContent("Stretch Curve", "Evaluates stretching of the leg by target distance relative to leg length. Value at time 1 represents stretching amount at the point where distance to the target is equal to leg length. Value at time 1 represents stretching amount at the point where distance to the target is double the leg length. Value represents the amount of stretching. Linear stretching would be achieved with a linear curve going up by 45 degrees. Increase the range of stretching by moving the last key up and right at the same amount. Smoothing in the curve can help reduce knee snapping (start stretching the arm slightly before target distance reaches leg length)."));
+
 			EditorGUILayout.PropertyField(prop.FindPropertyRelative("heelOffset"), new GUIContent("Heel Offset", "Offset of the heel in world space."));
 		}
 		

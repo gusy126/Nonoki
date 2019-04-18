@@ -8,16 +8,16 @@ namespace RootMotion.Demos {
 
 		public VRIK ik;
 
-		private Vector3 lastPosition;
+        private Vector3 lastPosition;
 		private Quaternion lastRotation = Quaternion.identity;
 
-		void Start() {
-			lastPosition = transform.position;
+		void OnEnable() {
+            lastPosition = transform.position;
 			lastRotation = transform.rotation;
 		}
 		
-		void Update () {
-			// Adding the motion of this Transform to VRIK
+		void LateUpdate () {
+            // Adding the motion of this Transform to VRIK
 			ik.solver.AddPlatformMotion (transform.position - lastPosition, transform.rotation * Quaternion.Inverse(lastRotation), transform.position);
 
 			lastRotation = transform.rotation;

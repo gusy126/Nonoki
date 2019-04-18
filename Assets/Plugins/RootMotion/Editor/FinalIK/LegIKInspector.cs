@@ -5,7 +5,7 @@ using System.Collections;
 namespace RootMotion.FinalIK {
 	
 	/*
-	 * Custom inspector for TrigonometricIK.
+	 * Custom inspector for LegIK.
 	 * */
 	[CustomEditor(typeof(LegIK))]
 	public class LegIKInspector : IKInspector {

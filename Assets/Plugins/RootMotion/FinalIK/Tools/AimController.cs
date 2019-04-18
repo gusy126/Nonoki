@@ -92,7 +92,19 @@ namespace RootMotion.FinalIK {
 		/// </summary>
 		[Range(0f, 180f)] public float maxRootAngle = 45f;
 
-		[Header("Mode")]
+        [Tooltip("If enabled, aligns the root forward to target direction after 'Max Root Angle' has been exceeded.")]
+        /// <summary>
+        /// If enabled, aligns the root forward to target direction after 'Max Root Angle' has been exceeded.
+        /// </summary>
+        public bool turnToTarget;
+
+        [Tooltip("The time of turning towards the target direction if 'Max Root Angle has been exceeded and 'Turn To Target' is enabled.")]
+        /// <summary>
+        /// The time of turning towards the target direction if 'Max Root Angle has been exceeded and 'Turn To Target' is enabled.
+        /// </summary>
+        public float turnToTargetTime = 0.2f;
+
+        [Header("Mode")]
 
 		[Tooltip("If true, AimIK will consider whatever the current direction of the weapon to be the forward aiming direction and work additively on top of that. This enables you to use recoil and reloading animations seamlessly with AimIK. Adjust the Vector3 value below if the weapon is not aiming perfectly forward in the aiming animation clip.")]
 		/// <summary>
@@ -112,8 +124,11 @@ namespace RootMotion.FinalIK {
 		private Vector3 lastPosition;
 		private Vector3 dir;
 		private bool lastSmoothTowardsTarget;
+        private bool turningToTarget;
+        private float turnToTargetMlp = 1f;
+        private float turnToTargetMlpV;
 
-		void Start() {
+        void Start() {
 			lastPosition = ik.solver.IKPosition;
 			dir = ik.solver.IKPosition - pivot;
 
@@ -179,7 +194,7 @@ namespace RootMotion.FinalIK {
 		// Pivot of rotating the aiming direction.
 		private Vector3 pivot {
 			get {
-				return ik.transform.position + ik.transform.rotation * pivotOffsetFromRoot;
+                return ik.transform.position + ik.transform.rotation * pivotOffsetFromRoot;
 			}
 		}
 
@@ -194,7 +209,7 @@ namespace RootMotion.FinalIK {
 
 		// Character root will be rotate around the Y axis to keep root forward within this angle from the aiming direction.
 		private void RootRotation() {
-			float max = Mathf.Lerp(180f, maxRootAngle, ik.solver.IKPositionWeight);
+            float max = Mathf.Lerp(180f, maxRootAngle * turnToTargetMlp, ik.solver.IKPositionWeight);
 
 			if (max < 180f) {
 				Vector3 faceDirLocal = Quaternion.Inverse(ik.transform.rotation) * (ik.solver.IKPosition - pivot);
@@ -204,13 +219,32 @@ namespace RootMotion.FinalIK {
 
 				if (angle > max) {
 					rotation = angle - max;
+                    if (!turningToTarget && turnToTarget) StartCoroutine(TurnToTarget());
 				}
 				if (angle < -max) {
 					rotation = angle + max;
-				}
+                    if (!turningToTarget && turnToTarget) StartCoroutine(TurnToTarget());
+                }
 
 				ik.transform.rotation = Quaternion.AngleAxis(rotation, ik.transform.up) * ik.transform.rotation;		
 			}
 		}
+
+        // Aligns the root forward to target direction after "Max Root Angle" has been exceeded.
+        private IEnumerator TurnToTarget()
+        {
+            turningToTarget = true;
+            
+            while (turnToTargetMlp > 0f)
+            {
+                turnToTargetMlp = Mathf.SmoothDamp(turnToTargetMlp, 0f, ref turnToTargetMlpV, turnToTargetTime);
+                if (turnToTargetMlp < 0.01f) turnToTargetMlp = 0f;
+                
+                 yield return null;
+            }
+
+            turnToTargetMlp = 1f;
+            turningToTarget = false;
+        }
 	}
 }

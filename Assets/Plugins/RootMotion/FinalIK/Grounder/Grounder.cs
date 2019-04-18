@@ -41,7 +41,7 @@ namespace RootMotion.FinalIK {
 		
 		#endregion Main Interface
 
-		protected bool initiated;
+		public bool initiated { get; protected set; }
 
 		// Gets the spine bend direction
 		protected Vector3 GetSpineOffsetTarget() {

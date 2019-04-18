@@ -15,8 +15,8 @@ namespace RootMotion.Demos {
 		public float enableInputAtProgress = 0.8f; // The normalized interaction progress after which the character is able to move again
 
 		protected override void Update() {
-			// Disable input when in interaction
-			if (disableInputInInteraction && interactionSystem != null && (interactionSystem.inInteraction || interactionSystem.IsPaused())) {
+            // Disable input when in interaction
+            if (disableInputInInteraction && interactionSystem != null && (interactionSystem.inInteraction || interactionSystem.IsPaused())) {
 
 				// Get the least interaction progress
 				float progress = interactionSystem.GetMinActiveProgress();
@@ -29,6 +29,7 @@ namespace RootMotion.Demos {
 				}
 			}
 
+            
 			// Pass on the FixedUpdate call
 			base.Update();
 		}

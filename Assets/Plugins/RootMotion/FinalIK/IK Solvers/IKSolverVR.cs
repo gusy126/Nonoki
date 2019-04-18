@@ -28,7 +28,8 @@ namespace RootMotion.FinalIK {
 			hasNeck = solverTransforms[4] != null;
 			hasShoulders = solverTransforms[6] != null && solverTransforms[10] != null;
 			hasToes = solverTransforms[17] != null && solverTransforms[21] != null;
-			
+            hasLegs = solverTransforms[14] != null;
+
 			readPositions = new Vector3[solverTransforms.Length];
 			readRotations = new Quaternion[solverTransforms.Length];
 			
@@ -41,7 +42,7 @@ namespace RootMotion.FinalIK {
 		/// </summary>
 		public void GuessHandOrientations(VRIK.References references, bool onlyIfZero) {
 			if (!references.isFilled) {
-				Debug.LogWarning("VRIK References are not filled in, can not guess hand orientations. Right-click on VRIK header and slect 'Guess Hand Orientations' when you have filled in the References.");
+				Debug.LogWarning("VRIK References are not filled in, can not guess hand orientations. Right-click on VRIK header and slect 'Guess Hand Orientations' when you have filled in the References.", references.root);
 				return;
 			}
 			
@@ -131,11 +132,15 @@ namespace RootMotion.FinalIK {
 			if (!initiated) return;
 
 			UpdateSolverTransforms();
-			Read(readPositions, readRotations, hasChest, hasNeck, hasShoulders, hasToes);
+			Read(readPositions, readRotations, hasChest, hasNeck, hasShoulders, hasToes, hasLegs);
 			
 			spine.faceDirection = rootBone.readRotation * Vector3.forward;
-			locomotion.Reset(readPositions, readRotations);
-			raycastOriginPelvis = spine.pelvis.readPosition;
+
+            if (hasLegs)
+            {
+                locomotion.Reset(readPositions, readRotations);
+                raycastOriginPelvis = spine.pelvis.readPosition;
+            }
 		}
 
 		public override void StoreDefaultLocalState() {
@@ -154,7 +159,8 @@ namespace RootMotion.FinalIK {
 				if (solverTransforms[i] != null) {
 					bool isPelvis = i == 1;
 					bool isArm = i > 5 && i < 14;
-					if (isPelvis || isArm) {
+					bool isLeg = i >= 14;
+					if (isPelvis || isArm || isLeg) {
 						solverTransforms[i].localPosition = defaultLocalPositions[i - 1];
 					}
 					solverTransforms[i].localRotation = defaultLocalRotations[i - 1];
@@ -202,7 +208,7 @@ namespace RootMotion.FinalIK {
 		}
 
 		private Transform[] solverTransforms = new Transform[0];
-		private bool hasChest, hasNeck, hasShoulders, hasToes; // TODO hasLegs
+        private bool hasChest, hasNeck, hasShoulders, hasToes, hasLegs;
 		private Vector3[] readPositions = new Vector3[0];
 		private Quaternion[] readRotations = new Quaternion[0];
 		private Vector3[] solvedPositions = new Vector3[22];
@@ -280,14 +286,14 @@ namespace RootMotion.FinalIK {
 
 		protected override void OnInitiate() {
 			UpdateSolverTransforms();
-			Read(readPositions, readRotations, hasChest, hasNeck, hasShoulders, hasToes);
+			Read(readPositions, readRotations, hasChest, hasNeck, hasShoulders, hasToes, hasLegs);
 		}
 
 		protected override void OnUpdate() {
 			if (IKPositionWeight > 0f) {
 				UpdateSolverTransforms();
 
-				Read(readPositions, readRotations, hasChest, hasNeck, hasShoulders, hasToes);
+				Read(readPositions, readRotations, hasChest, hasNeck, hasShoulders, hasToes, hasLegs);
 				Solve();
 				Write();
 
@@ -300,9 +306,16 @@ namespace RootMotion.FinalIK {
 				if (solverTransforms[i] != null) {
 					bool isRootOrPelvis = i < 2;
 					bool isArm = i > 5 && i < 14;
-					if (isRootOrPelvis || isArm) {
+					bool isLeg = i >= 14;
+
+					if (isRootOrPelvis) {
 						solverTransforms[i].position = V3Tools.Lerp(solverTransforms[i].position, GetPosition(i), IKPositionWeight);
 					}
+
+					if (isArm || isLeg) {
+						solverTransforms[i].position = V3Tools.Lerp(solverTransforms[i].position, GetPosition(i), IKPositionWeight);
+					}
+
 
 					solverTransforms[i].rotation = QuaTools.Lerp(solverTransforms[i].rotation, GetRotation(i), IKPositionWeight);
 				}
@@ -318,18 +331,21 @@ namespace RootMotion.FinalIK {
 		private Vector3 bodyOffset;
 		private int supportLegIndex;
 
-		private void Read(Vector3[] positions, Quaternion[] rotations, bool hasChest, bool hasNeck, bool hasShoulders, bool hasToes) {
+		private void Read(Vector3[] positions, Quaternion[] rotations, bool hasChest, bool hasNeck, bool hasShoulders, bool hasToes, bool hasLegs) {
 			if (rootBone == null) {
 				rootBone = new VirtualBone (positions [0], rotations [0]);
 			} else {
 				rootBone.Read (positions [0], rotations [0]);
 			}
 
-			spine.Read(positions, rotations, hasChest, hasNeck, hasShoulders, hasToes, 0, 1);
-			leftArm.Read(positions, rotations, hasChest, hasNeck, hasShoulders, hasToes, hasChest? 3: 2, 6);
-			rightArm.Read(positions, rotations, hasChest, hasNeck, hasShoulders, hasToes, hasChest? 3: 2, 10);
-			leftLeg.Read(positions, rotations, hasChest, hasNeck, hasShoulders, hasToes, 1, 14);
-			rightLeg.Read(positions, rotations, hasChest, hasNeck, hasShoulders, hasToes, 1, 18);
+			spine.Read(positions, rotations, hasChest, hasNeck, hasShoulders, hasToes, hasLegs, 0, 1);
+			leftArm.Read(positions, rotations, hasChest, hasNeck, hasShoulders, hasToes, hasLegs, hasChest? 3: 2, 6);
+			rightArm.Read(positions, rotations, hasChest, hasNeck, hasShoulders, hasToes, hasLegs, hasChest? 3: 2, 10);
+
+            if (hasLegs) {
+                leftLeg.Read(positions, rotations, hasChest, hasNeck, hasShoulders, hasToes, hasLegs, 1, 14);
+                rightLeg.Read(positions, rotations, hasChest, hasNeck, hasShoulders, hasToes, hasLegs, 1, 18);
+            }
 
 			for (int i = 0; i < rotations.Length; i++) {
 				this.solvedPositions[i] = positions[i];
@@ -337,10 +353,10 @@ namespace RootMotion.FinalIK {
 			}
 
 			if (!initiated) {
-				legs = new Leg[2] { leftLeg, rightLeg };
+				if (hasLegs) legs = new Leg[2] { leftLeg, rightLeg };
 				arms = new Arm[2] { leftArm, rightArm };
 
-				locomotion.Initiate(positions, rotations, hasToes);
+				if (hasLegs) locomotion.Initiate(positions, rotations, hasToes);
 				raycastOriginPelvis = spine.pelvis.readPosition;
 				spine.faceDirection = readRotations[0] * Vector3.forward;
 			}
@@ -350,7 +366,7 @@ namespace RootMotion.FinalIK {
 			// Pre-Solving
 			spine.PreSolve();
 			foreach (Arm arm in arms) arm.PreSolve();
-			foreach (Leg leg in legs) leg.PreSolve();
+			if (hasLegs) foreach (Leg leg in legs) leg.PreSolve();
 
 			// Applying spine and arm offsets
 			foreach (Arm arm in arms) arm.ApplyOffsets();
@@ -359,12 +375,12 @@ namespace RootMotion.FinalIK {
 			// Spine
 			spine.Solve(rootBone, legs, arms);
 
-			if (spine.pelvisPositionWeight > 0f && plantFeet) {
+			if (hasLegs && spine.pelvisPositionWeight > 0f && plantFeet) {
 				Warning.Log("If VRIK 'Pelvis Position Weight' is > 0, 'Plant Feet' should be disabled to improve performance and stability.", root);
 			}
 
 			// Locomotion
-			if (locomotion.weight > 0f) {
+			if (hasLegs && locomotion.weight > 0f) {
 				Vector3 leftFootPosition = Vector3.zero;
 				Vector3 rightFootPosition = Vector3.zero;
 				Quaternion leftFootRotation = Quaternion.identity;
@@ -410,28 +426,40 @@ namespace RootMotion.FinalIK {
 				bodyOffset = Vector3.Lerp(Vector3.zero, bodyOffset, locomotion.weight);
 			}
 
-			// Legs
-			foreach (Leg leg in legs) {
-				leg.ApplyOffsets();
-			}
+            // Legs
+            if (hasLegs)
+            {
+                foreach (Leg leg in legs)
+                {
+                    leg.ApplyOffsets();
+                }
+                if (!plantFeet)
+                {
+                    spine.InverseTranslateToHead(legs, false, false, bodyOffset, 1f);
 
-			if (!plantFeet) {
-				spine.InverseTranslateToHead(legs, false, false, bodyOffset, 1f);
+                    foreach (Leg leg in legs) leg.TranslateRoot(spine.pelvis.solverPosition, spine.pelvis.solverRotation);
+                    foreach (Leg leg in legs)
+                    {
+                        leg.Solve(true);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        spine.InverseTranslateToHead(legs, true, true, bodyOffset, 1f);
 
-				foreach (Leg leg in legs) leg.TranslateRoot(spine.pelvis.solverPosition, spine.pelvis.solverRotation);
-				foreach (Leg leg in legs) {
-					leg.Solve();
-				}
-			} else {
-				for (int i = 0; i < 2; i++) {
-					spine.InverseTranslateToHead(legs, true, i == 0, bodyOffset, 1f);
-
-					foreach (Leg leg in legs) leg.TranslateRoot(spine.pelvis.solverPosition, spine.pelvis.solverRotation);
-					foreach (Leg leg in legs) {
-						leg.Solve();
-					}
-				}
-			}
+                        foreach (Leg leg in legs) leg.TranslateRoot(spine.pelvis.solverPosition, spine.pelvis.solverRotation);
+                        foreach (Leg leg in legs)
+                        {
+                            leg.Solve(i == 0);
+                        }
+                    }
+                }
+            } else
+            {
+                spine.InverseTranslateToHead(legs, false, false, bodyOffset, 1f);
+            }
 
 			// Arms
 			for (int i = 0; i < arms.Length; i++) {
@@ -444,25 +472,33 @@ namespace RootMotion.FinalIK {
 
 			// Reset offsets
 			spine.ResetOffsets();
-			foreach (Leg leg in legs) leg.ResetOffsets();
+			if (hasLegs) foreach (Leg leg in legs) leg.ResetOffsets();
 			foreach (Arm arm in arms) arm.ResetOffsets();
 
-			spine.pelvisPositionOffset += GetPelvisOffset();
-			spine.chestPositionOffset += spine.pelvisPositionOffset;
-			//spine.headPositionOffset += spine.pelvisPositionOffset;
+            if (hasLegs)
+            {
+                spine.pelvisPositionOffset += GetPelvisOffset();
+                spine.chestPositionOffset += spine.pelvisPositionOffset;
+                //spine.headPositionOffset += spine.pelvisPositionOffset;
+            }
 
 			Write();
 
-			// Find the support leg
-			supportLegIndex = -1;
-			float shortestMag = Mathf.Infinity;
-			for (int i = 0; i < legs.Length; i++) {
-				float mag = Vector3.SqrMagnitude(legs[i].lastBone.solverPosition - legs[i].bones[0].solverPosition);
-				if (mag < shortestMag) {
-					supportLegIndex = i;
-					shortestMag = mag;
-				}
-			}
+            // Find the support leg
+            if (hasLegs)
+            {
+                supportLegIndex = -1;
+                float shortestMag = Mathf.Infinity;
+                for (int i = 0; i < legs.Length; i++)
+                {
+                    float mag = Vector3.SqrMagnitude(legs[i].lastBone.solverPosition - legs[i].bones[0].solverPosition);
+                    if (mag < shortestMag)
+                    {
+                        supportLegIndex = i;
+                        shortestMag = mag;
+                    }
+                }
+            }
 		}
 
 		private Vector3 GetPosition(int index) {
@@ -516,11 +552,11 @@ namespace RootMotion.FinalIK {
 		/// </summary>
 		public Leg rightLeg = new Leg();
 
-		[Tooltip("The procedural locomotion solver.")]
-		/// <summary>
-		/// The procedural locomotion solver.
-		/// </summary>
-		public Locomotion locomotion = new Locomotion();
+        [Tooltip("Procedural leg shuffling for stationary VR games. Not designed for roomscale and thumbstick locomotion. For those it would be better to use a strafing locomotion blend tree to make the character follow the horizontal direction towards the HMD by root motion or script.")]
+        /// <summary>
+        /// Procedural leg shuffling for stationary VR games. Not designed for roomscale and thumbstick locomotion. For those it would be better to use a strafing locomotion blend tree to make the character follow the horizontal direction towards the HMD by root motion or script.
+        /// </summary>
+        public Locomotion locomotion = new Locomotion();
 
 		private Leg[] legs = new Leg[2];
 		private Arm[] arms = new Arm[2];
@@ -538,7 +574,10 @@ namespace RootMotion.FinalIK {
 			solvedRotations[0] = rootBone.solverRotation;
 			spine.Write(ref solvedPositions, ref solvedRotations);
 
-			foreach (Leg leg in legs) leg.Write(ref solvedPositions, ref solvedRotations);
+            if (hasLegs)
+            {
+                foreach (Leg leg in legs) leg.Write(ref solvedPositions, ref solvedRotations);
+            }
 			foreach (Arm arm in arms) arm.Write(ref solvedPositions, ref solvedRotations);
 		}
 

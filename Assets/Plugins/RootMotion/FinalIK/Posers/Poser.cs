@@ -30,6 +30,13 @@ namespace RootMotion.FinalIK {
 		/// </summary>
 		public abstract void AutoMapping();
 
+		/// <summary>
+		/// For manual update of the poser.
+		/// </summary>
+		public void UpdateManual() {
+			UpdatePoser();
+		}
+
 		private bool initiated;
 		protected abstract void InitiatePoser();
 		protected abstract void UpdatePoser();

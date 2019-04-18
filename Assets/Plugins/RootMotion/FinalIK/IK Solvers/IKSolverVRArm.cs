@@ -54,9 +54,15 @@ namespace RootMotion.FinalIK {
 
 			[Tooltip("The weight of shoulder rotation")]
 			/// <summary>
-			/// The weight of shoulder rotation
+			/// The weight of shoulder rotation.
 			/// </summary>
 			[Range(0f, 1f)] public float shoulderRotationWeight = 1f;
+
+			[Tooltip("The weight of twisting the shoulders back when arms are lifted up.")]
+			/// <summary>
+			/// The weight of twisting the shoulders back when arms are lifted up.
+			/// </summary>
+			[Range(0f, 1f)] public float shoulderTwistWeight = 1f;
 
 			[Tooltip("If greater than 0, will bend the elbow towards the 'Bend Goal' Transform.")]
 			/// <summary>
@@ -93,7 +99,7 @@ namespace RootMotion.FinalIK {
 			/// <summary>
 			/// Evaluates stretching of the arm by target distance relative to arm length. Value at time 1 represents stretching amount at the point where distance to the target is equal to arm length. Value at time 2 represents stretching amount at the point where distance to the target is double the arm length. Value represents the amount of stretching. Linear stretching would be achieved with a linear curve going up by 45 degrees. Increase the range of stretching by moving the last key up and right at the same amount. Smoothing in the curve can help reduce elbow snapping (start stretching the arm slightly before target distance reaches arm length).
 			/// </summary>
-			public AnimationCurve stretchCurve;
+			public AnimationCurve stretchCurve = new AnimationCurve();
 
 			/// <summary>
 			/// Target position of the hand. Will be overwritten if target is assigned.
@@ -123,9 +129,21 @@ namespace RootMotion.FinalIK {
 
 			private bool hasShoulder;
 			private VirtualBone shoulder { get { return bones[0]; }}
-			private VirtualBone upperArm { get { return bones[1]; }}
-			private VirtualBone forearm { get { return bones[2]; }}
-			private VirtualBone hand { get { return bones[3]; }}
+			private VirtualBone upperArm { 
+				get { 
+					return bones[hasShoulder? 1: 0]; 
+				}
+			}
+			private VirtualBone forearm { 
+				get { 
+					return bones[hasShoulder? 2: 1]; 
+				}
+			}
+			private VirtualBone hand { 
+				get { 
+					return bones[hasShoulder? 3: 2]; 
+				}
+			}
 			private Vector3 chestForwardAxis;
 			private Vector3 chestUpAxis;
 			private Quaternion chestRotation = Quaternion.identity;
@@ -136,7 +154,7 @@ namespace RootMotion.FinalIK {
 			private const float yawOffsetAngle = 45f;
 			private const float pitchOffsetAngle = -30f;
 
-			protected override void OnRead(Vector3[] positions, Quaternion[] rotations, bool hasChest, bool hasNeck, bool hasShoulders, bool hasToes, int rootIndex, int index) {
+			protected override void OnRead(Vector3[] positions, Quaternion[] rotations, bool hasChest, bool hasNeck, bool hasShoulders, bool hasToes, bool hasLegs, int rootIndex, int index) {
 				Vector3 shoulderPosition = positions[index];
 				Quaternion shoulderRotation = rotations[index];
 				Vector3 upperArmPosition = positions[index + 1];
@@ -307,7 +325,7 @@ namespace RootMotion.FinalIK {
 						// Solve trigonometric
 						VirtualBone.SolveTrigonometric(bones, 1, 2, 3, position, GetBendNormal(position - upperArm.solverPosition), positionWeight);
 
-						float p = Mathf.Clamp(pitch * 2f * positionWeight, 0f, 180f);
+						float p = Mathf.Clamp(pitch * positionWeight * shoulderRotationWeight * shoulderTwistWeight * 2f, 0f, 180f);
 						shoulder.solverRotation = Quaternion.AngleAxis(p, shoulder.solverRotation * (isLeft? shoulder.axis: -shoulder.axis)) * shoulder.solverRotation;
 						upperArm.solverRotation = Quaternion.AngleAxis(p, upperArm.solverRotation * (isLeft? upperArm.axis: -upperArm.axis)) * upperArm.solverRotation;
 
@@ -334,7 +352,7 @@ namespace RootMotion.FinalIK {
 						float angleAfter = Mathf.Atan2(vAfter.x, vAfter.z) * Mathf.Rad2Deg;
 						float pitchAngle = Mathf.DeltaAngle(angleBefore, angleAfter);
 						if (isLeft) pitchAngle = -pitchAngle;
-						pitchAngle = Mathf.Clamp(pitchAngle * 2f * positionWeight, 0f, 180f);
+						pitchAngle = Mathf.Clamp(pitchAngle * shoulderRotationWeight * shoulderTwistWeight * 2f * positionWeight, 0f, 180f);
 
 						shoulder.solverRotation = Quaternion.AngleAxis(pitchAngle, shoulder.solverRotation * (isLeft? shoulder.axis: -shoulder.axis)) * shoulder.solverRotation;
 						upperArm.solverRotation = Quaternion.AngleAxis(pitchAngle, upperArm.solverRotation * (isLeft? upperArm.axis: -upperArm.axis)) * upperArm.solverRotation;
@@ -344,7 +362,11 @@ namespace RootMotion.FinalIK {
 					Stretching();
 
 					// Solve arm trigonometric
-					VirtualBone.SolveTrigonometric(bones, 1, 2, 3, position, GetBendNormal(position - upperArm.solverPosition), positionWeight);
+					if (hasShoulder) {
+						VirtualBone.SolveTrigonometric(bones, 1, 2, 3, position, GetBendNormal(position - upperArm.solverPosition), positionWeight);
+					} else {
+						VirtualBone.SolveTrigonometric(bones, 0, 1, 2, position, GetBendNormal(position - upperArm.solverPosition), positionWeight);
+					}
 				}
 
 				// Fix forearm twist relative to upper arm

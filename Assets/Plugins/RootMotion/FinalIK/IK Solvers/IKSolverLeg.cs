@@ -107,7 +107,7 @@ namespace RootMotion.FinalIK {
 			
 			leg.PreSolve ();
 			leg.ApplyOffsets( );
-			leg.Solve ();
+			leg.Solve (true);
 			leg.ResetOffsets ();
 		}
 		
@@ -131,7 +131,7 @@ namespace RootMotion.FinalIK {
 			rotations [4] = foot.transform.rotation;
 			rotations [5] = toe.transform.rotation;
 			
-			leg.Read(positions, rotations, false, false, false, true, 1, 2);
+			leg.Read(positions, rotations, false, false, false, true, true, 1, 2);
 		}
 		
 		private void Write() {
@@ -141,6 +141,9 @@ namespace RootMotion.FinalIK {
 			calf.transform.rotation = rotations [3];
 			foot.transform.rotation = rotations [4];
 			toe.transform.rotation = rotations [5];
+
+			calf.transform.position = positions[3];
+			foot.transform.position = positions[4];
 		}
 	}
 }

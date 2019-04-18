@@ -173,15 +173,23 @@ namespace RootMotion.FinalIK {
 				Vector3 f = grounding.GetFootCenterOffset ();
 				if (invertFootCenter) f = -f;
 				Vector3 origin = transform.position + f;
-				hit.point = origin - up * grounding.maxStep * 2f;
-				hit.normal = up;
-				
+
+                if (grounding.overstepFallsDown)
+                {
+                    hit.point = origin - up * grounding.maxStep * 2f;
+                }
+                else
+                {
+                    hit.point = new Vector3(transform.position.x, grounding.root.position.y, transform.position.z);
+                }
+                hit.normal = up;
+                
 				// Start point of the capsule
 				Vector3 capsuleStart = origin + grounding.maxStep * up;
 				// End point of the capsule depending on the foot's velocity.
 				Vector3 capsuleEnd = capsuleStart + offsetFromHeel;
 
-				if (Physics.CapsuleCast(capsuleStart, capsuleEnd, grounding.footRadius, -up, out hit, grounding.maxStep * 3, grounding.layers)) {
+				if (Physics.CapsuleCast(capsuleStart, capsuleEnd, grounding.footRadius, -up, out hit, grounding.maxStep * 3, grounding.layers, QueryTriggerInteraction.Ignore)) {
 
 					// Safeguarding from a CapsuleCast bug in Unity that might cause it to return NaN for hit.point when cast against large colliders.
 					if (float.IsNaN(hit.point.x)) {
@@ -196,11 +204,20 @@ namespace RootMotion.FinalIK {
 			private RaycastHit GetRaycastHit(Vector3 offsetFromHeel) {
 				RaycastHit hit = new RaycastHit();
 				Vector3 origin = transform.position + offsetFromHeel;
-				hit.point = origin - up * grounding.maxStep * 2f;
-				hit.normal = up;
-				if (grounding.maxStep <= 0f) return hit;
 
-				Physics.Raycast(origin + grounding.maxStep * up, -up, out hit, grounding.maxStep * 3, grounding.layers);
+                if (grounding.overstepFallsDown)
+                {
+                    hit.point = origin - up * grounding.maxStep * 2f;
+                }
+                else
+                {
+                    hit.point = new Vector3(transform.position.x, grounding.root.position.y, transform.position.z);
+                }
+                hit.normal = up;
+                
+                if (grounding.maxStep <= 0f) return hit;
+
+				Physics.Raycast(origin + grounding.maxStep * up, -up, out hit, grounding.maxStep * 3, grounding.layers, QueryTriggerInteraction.Ignore);
 				return hit;
 			}
 			

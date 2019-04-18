@@ -137,6 +137,7 @@ namespace RootMotion.FinalIK {
 		private Transform forefeetRoot;
 		private Quaternion headRotation;
 		private float lastWeight;
+		private Rigidbody characterRootRigidbody;
 		
 		// Can we initiate the Grounding?
 		private bool IsReadyToInitiate() {
@@ -224,7 +225,9 @@ namespace RootMotion.FinalIK {
 			
 			for (int i = 0; i < footBones.Length; i++) feet[i].leg = solver.legs[i];
 			for (int i = 0; i < forefootBones.Length; i++) feet[i + legs.Length].leg = forelegSolver.legs[i];
-			
+
+			characterRootRigidbody = characterRoot.GetComponent<Rigidbody>();
+
 			initiated = true;
 		}
 		
@@ -287,8 +290,12 @@ namespace RootMotion.FinalIK {
 			
 			// Interpolate the angle
 			angle = Mathf.Lerp(angle, angleTarget, Time.deltaTime * rootRotationSpeed);
-			
-			characterRoot.rotation = Quaternion.Slerp(characterRoot.rotation, Quaternion.AngleAxis(-angle, characterRoot.right) * horizontalRotation, weight);
+
+			if (characterRootRigidbody == null) {
+				characterRoot.rotation = Quaternion.Slerp(characterRoot.rotation, Quaternion.AngleAxis(-angle, characterRoot.right) * horizontalRotation, weight);
+			} else {
+				characterRootRigidbody.MoveRotation(Quaternion.Slerp(characterRoot.rotation, Quaternion.AngleAxis(-angle, characterRoot.right) * horizontalRotation, weight));
+			}
 		}
 		
 		// Called before updating the first IK solver

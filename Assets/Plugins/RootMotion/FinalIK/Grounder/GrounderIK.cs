@@ -67,6 +67,7 @@ namespace RootMotion.FinalIK {
 		private int solvedFeet;
 		private bool solved;
 		private float lastWeight;
+		private Rigidbody characterRootRigidbody;
 
 		// Can we initiate the Grounding?
 		private bool IsReadyToInitiate() {
@@ -131,7 +132,11 @@ namespace RootMotion.FinalIK {
 					Quaternion rotationTarget = Quaternion.RotateTowards(upRotation, Quaternion.FromToRotation(transform.up, normal) * characterRoot.rotation, maxRootRotationAngle);
 
 					// Rotate the root
-					characterRoot.rotation = Quaternion.Lerp(characterRoot.rotation, rotationTarget, Time.deltaTime * rootRotationSpeed);
+					if (characterRootRigidbody == null) {
+						characterRoot.rotation = Quaternion.Lerp(characterRoot.rotation, rotationTarget, Time.deltaTime * rootRotationSpeed);
+					} else {
+						characterRootRigidbody.MoveRotation(Quaternion.Lerp(characterRoot.rotation, rotationTarget, Time.deltaTime * rootRotationSpeed));
+					}
 				}
 
 				return;
@@ -171,6 +176,8 @@ namespace RootMotion.FinalIK {
 					solver.legs[i].invertFootCenter = true;
 				}
 			}
+
+			characterRootRigidbody = characterRoot.GetComponent<Rigidbody>();
 			
 			initiated = true;
 		}

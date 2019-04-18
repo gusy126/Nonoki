@@ -594,8 +594,9 @@ namespace RootMotion.FinalIK {
 		private Collider lastCollider, c;
 
 		// Initiate
-		protected virtual void Start() {
+		void Start() {
 			if (fullBody == null) fullBody = GetComponent<FullBodyBipedIK>();
+			//Debug.Log(fullBody);
 			if (fullBody == null) {
 				Warning.Log("InteractionSystem can not find a FullBodyBipedIK component", transform);
 				return;
@@ -755,7 +756,6 @@ namespace RootMotion.FinalIK {
 		private void OnPreFBBIK() {
 			if (!enabled) return;
 			if (fullBody == null) return;
-			if (!fullBody.enabled) return;
 
 			lookAt.SolveSpine();
 
@@ -766,7 +766,6 @@ namespace RootMotion.FinalIK {
 		private void OnPostFBBIK() {
 			if (!enabled) return;
 			if (fullBody == null) return;
-			if (!fullBody.enabled) return;
 
 			for (int i = 0; i < interactionEffectors.Length; i++) interactionEffectors[i].OnPostFBBIK();
 

@@ -23,6 +23,7 @@ namespace RootMotion.Demos {
 			public bool onGround; // is the character grounded
 			public bool isStrafing; // should the character always rotate to face the move direction or strafe?
 			public float yVelocity; // y velocity of the character
+			public bool doubleJump;
 		}
 
 		[Header("References")]
@@ -50,6 +51,8 @@ namespace RootMotion.Demos {
 		public float airControl = 2f; // determines the response speed of controlling the character while airborne
 		public float jumpPower = 12f; // determines the jump force applied when jumping (and therefore the jump height)
 		public float jumpRepeatDelayTime = 0f;			// amount of time that must elapse between landing and being able to jump again
+		public bool doubleJumpEnabled;
+		public float doubleJumpPowerMlp = 1f;
 
 		[Header("Wall Running")]
 
@@ -83,6 +86,8 @@ namespace RootMotion.Demos {
 		private Vector3 gravity;
 		private Vector3 verticalVelocity;
 		private float velocityY;
+		private bool doubleJumped;
+		private bool jumpReleased;
 
 		// Use this for initialization
 		protected override void Start () {
@@ -110,7 +115,7 @@ namespace RootMotion.Demos {
 		}
 
 		void FixedUpdate() {
-			gravity = GetGravity();
+            gravity = GetGravity();
 
 			verticalVelocity = V3Tools.ExtractVertical(r.velocity, gravity, 1f);
 			velocityY = verticalVelocity.magnitude;
@@ -127,7 +132,7 @@ namespace RootMotion.Demos {
 			r.interpolation = smoothPhysics? RigidbodyInterpolation.Interpolate: RigidbodyInterpolation.None;
 			characterAnimation.smoothFollow = smoothPhysics;
 
-			// Move
+            // Move
 			MoveFixed(fixedDeltaPosition);
 			fixedDeltaPosition = Vector3.zero;
 
@@ -159,18 +164,30 @@ namespace RootMotion.Demos {
 			if (onGround) {
 				// Jumping
 				animState.jump = Jump();
+				jumpReleased = false;
+				doubleJumped = false;
 			} else {
-				r.AddForce(gravity * gravityMultiplier);
+				if (!userControl.state.jump) jumpReleased = true;
+
+				//r.AddForce(gravity * gravityMultiplier);
+				if (jumpReleased && userControl.state.jump && !doubleJumped && doubleJumpEnabled) {
+					jumpEndTime = Time.time + 0.1f;
+					animState.doubleJump = true;
+
+					Vector3 jumpVelocity = userControl.state.move * airSpeed;
+					r.velocity = jumpVelocity;
+					r.velocity += transform.up * jumpPower * doubleJumpPowerMlp;
+					doubleJumped = true;
+				}
 			}
 
 			// Scale the capsule colllider while crouching
 			ScaleCapsule(userControl.state.crouch? crouchCapsuleScaleMlp: 1f);
 
 			fixedFrame = true;
+        }
 
-		}
-
-		protected virtual void Update() {
+        protected virtual void Update() {
 			// Fill in animState
 			animState.onGround = onGround;
 			animState.moveDirection = GetMoveDirection();
@@ -229,10 +246,11 @@ namespace RootMotion.Demos {
 			}
 
 			r.velocity = horizontalVelocity + verticalVelocity;
-			
-			// Dampering forward speed on the slopes
-			float slopeDamper = !onGround? 1f: GetSlopeDamper(-deltaPosition / Time.deltaTime, normal);
-			forwardMlp = Mathf.Lerp(forwardMlp, slopeDamper, Time.deltaTime * 5f);
+
+            // Dampering forward speed on the slopes (Not working since Unity 2017.2)
+            //float slopeDamper = !onGround? 1f: GetSlopeDamper(-deltaPosition / Time.deltaTime, normal);
+            //forwardMlp = Mathf.Lerp(forwardMlp, slopeDamper, Time.deltaTime * 5f);
+            forwardMlp = 1f;
 		}
 
 		// Processing horizontal wall running

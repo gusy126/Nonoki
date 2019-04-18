@@ -12,7 +12,7 @@ namespace RootMotion.FinalIK {
 		[System.Serializable]
 		public class Locomotion {
 
-			[Tooltip("Used for blending in/out of procedural locomotion.")]
+            [Tooltip("Used for blending in/out of procedural locomotion.")]
 			/// <summary>
 			/// Used for blending in/out of procedural locomotion.
 			/// </summary>

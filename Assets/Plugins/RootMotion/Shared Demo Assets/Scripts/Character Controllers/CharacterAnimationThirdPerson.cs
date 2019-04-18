@@ -71,6 +71,9 @@ namespace RootMotion.Demos {
 			if (!characterController.animState.onGround) {
 				animator.SetFloat ("Jump", characterController.animState.yVelocity);
 			}
+
+			if (characterController.doubleJumpEnabled) animator.SetBool("DoubleJump", characterController.animState.doubleJump);
+			characterController.animState.doubleJump = false;
 			
 			// the anim speed multiplier allows the overall speed of walking/running to be tweaked in the inspector
 			if (characterController.animState.onGround && characterController.animState.moveDirection.z > 0f) {

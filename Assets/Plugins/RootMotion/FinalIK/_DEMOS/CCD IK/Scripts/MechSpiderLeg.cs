@@ -39,10 +39,13 @@ namespace RootMotion.Demos {
 			}
 		}
 		
-		void Start() {
-			// Find the ik component
-			ik = GetComponent<IK>();
+        void Awake()
+        {
+            // Find the ik component
+            ik = GetComponent<IK>();
+        }
 
+        void Start() {
 			// Workaround for Unity Win Store/Phone serialization bug
 			stepProgress = 1f;
 			
@@ -77,6 +80,11 @@ namespace RootMotion.Demos {
 
 			return hit.point + mechSpider.transform.up * footHeight * mechSpider.scale;
 		}
+
+        void OnEnable()
+        {
+            StartCoroutine(Step(position, position));
+        }
 
 		void Update () {
 			// if already stepping, do nothing

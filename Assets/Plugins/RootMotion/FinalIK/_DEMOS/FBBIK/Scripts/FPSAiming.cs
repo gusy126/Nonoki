@@ -16,6 +16,7 @@ namespace RootMotion.Demos {
 		[Range(0f, 1f)] public float aimWeight = 1f; // The weight of aiming the gun towards camera forward
 		[Range(0f, 1f)] public float sightWeight = 1f; // the weight of aiming down the sight (multiplied by aimWeight)
 		[Range(0f, 180f)] public float maxAngle = 80f; // The maximum angular offset of the aiming direction from the character forward. Character will be rotated to comply.
+		public Vector3 aimOffset; // Can be used to adjust the aiming angle
 
 		[SerializeField] bool animatePhysics; // Is Animate Physiscs turned on for the character?
 		[SerializeField] Transform gun; // The gun that the character is holding
@@ -50,7 +51,8 @@ namespace RootMotion.Demos {
 			// Making sure this works with Animate Physics
 			updateFrame = true;
 		}
-		
+
+
 		void LateUpdate() {
 			// Making sure this works with Animate Physics
 			if (!animatePhysics) updateFrame = true;
@@ -81,7 +83,7 @@ namespace RootMotion.Demos {
 			Quaternion camRotation = cam.transform.rotation;
 
 			// Aim the gun towards camera forward
-			gunAim.solver.IKPosition = cam.transform.position + cam.transform.forward * 10f;
+			gunAim.solver.IKPosition = cam.transform.position + cam.transform.forward * 10f + cam.transform.rotation * aimOffset;
 			gunAim.solver.IKPositionWeight = aimWeight;
 			gunAim.solver.Update();
 			cam.transform.rotation = camRotation;

@@ -57,13 +57,14 @@ namespace RootMotion.FinalIK {
 			}
 		}
 
+		protected Transform[] children;
+
 		private Transform _poseRoot;
-		private Transform[] children;
 		private Transform[] poseChildren;
 		private Vector3[] defaultLocalPositions;
 		private Quaternion[] defaultLocalRotations;
 
-		private void StoreDefaultState() {
+		protected void StoreDefaultState() {
 			defaultLocalPositions = new Vector3[children.Length];
 			defaultLocalRotations = new Quaternion[children.Length];
 

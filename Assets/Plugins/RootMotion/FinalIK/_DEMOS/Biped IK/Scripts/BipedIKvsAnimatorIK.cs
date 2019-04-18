@@ -45,7 +45,7 @@ namespace RootMotion.Demos {
 
 			// Look At
 			lookAtTargetAnimator.position = lookAtTargetBiped.position + offset;
-			
+
 			bipedIK.SetLookAtPosition(lookAtTargetBiped.position);
 			bipedIK.SetLookAtWeight(lookAtWeight, lookAtBodyWeight, lookAtHeadWeight, lookAtEyesWeight, lookAtClampWeight, lookAtClampWeightHead, lookAtClampWeightEyes);
 			

@@ -147,12 +147,25 @@ namespace RootMotion.FinalIK {
 		// Fix bones to their initial local position and rotation
 		public void FixTransforms() {
 			if (!initiated) return;
+            if (weight <= 0f) return;
 
 			solver.FixTransforms();
 
 			if (bone3 != null) {
 				bone3.localPosition = bone3DefaultLocalPosition;
 				bone3.localRotation = bone3DefaultLocalRotation;
+			}
+		}
+
+		// Stores the default localPosition/Rotation of the finger bones used by FixTransforms()
+		public void StoreDefaultLocalState() {
+			if (!initiated) return;
+
+			solver.StoreDefaultLocalState();
+
+			if (bone3 != null) {
+				bone3DefaultLocalPosition = bone3.localPosition;
+				bone3DefaultLocalRotation = bone3.localRotation;
 			}
 		}
 
@@ -188,8 +201,8 @@ namespace RootMotion.FinalIK {
 			solver.IKRotationWeight = rotationWeight;
 			solver.bendModifierWeight = rotationWeight;
 			solver.Update();
-		}
-	}
+        }
+    }
 
 	/// <summary>
 	/// Handles IK for a number of Fingers with 3-4 joints.
@@ -319,24 +332,32 @@ namespace RootMotion.FinalIK {
 		}
 
 		public void UpdateFingerSolvers() {
-			if (weight <= 0f) return;
-
 			foreach (Finger finger in fingers) {
 				finger.Update(weight);
 			}
 		}
 
 		public void FixFingerTransforms() {
+            if (weight <= 0f) return;
+
 			foreach (Finger finger in fingers) {
 				finger.FixTransforms();
 			}
 		}
+
+		public void StoreDefaultLocalState() {
+			foreach (Finger finger in fingers) {
+				finger.StoreDefaultLocalState();
+			}
+		}       
 
 		protected override void UpdateSolver() {
 			UpdateFingerSolvers();
 		}
 
 		protected override void FixTransforms() {
+            if (weight <= 0f) return;
+
 			FixFingerTransforms();
 		}
 	}
